@@ -11,7 +11,7 @@ output "dynamodb_table_name" {
 }
 
 output "dr_zone_name_servers" {
-  description = "Add these as NS records at your domain registrar (Hostinger) for dr.madtamizha.com"
+  description = "Add these as NS records at your domain registrar for dr.example.com"
   value       = aws_route53_zone.dr.name_servers
 }
 

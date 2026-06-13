@@ -4,7 +4,7 @@ A fully working, Terraform-provisioned disaster recovery setup demonstrating
 **Route 53 failover routing**, **DynamoDB Global Tables**, and a serverless
 **Lambda + API Gateway** application deployed identically to two AWS regions.
 
-Live failover endpoint: `api.dr.madtamizha.com`
+Live failover endpoint: `api.dr.example.com`
 
 ## Architecture
 
@@ -14,7 +14,7 @@ flowchart TB
 
     subgraph R53["Route 53"]
         HC[Health Check<br/>GET /health every 30s]
-        FO["Failover Record<br/>api.dr.madtamizha.com"]
+        FO["Failover Record<br/>api.dr.example.com"]
     end
 
     subgraph Primary["us-east-1 (PRIMARY - Active)"]
@@ -43,7 +43,7 @@ flowchart TB
 
 | Layer | Service | Notes |
 |---|---|---|
-| DNS / Failover | Route 53 | Hosted zone `dr.madtamizha.com`, health check on primary `/health`, PRIMARY/SECONDARY CNAME records |
+| DNS / Failover | Route 53 | Hosted zone `dr.example.com`, health check on primary `/health`, PRIMARY/SECONDARY CNAME records |
 | Compute | Lambda (Python 3.12) | Identical code deployed to both regions via Terraform |
 | API | API Gateway HTTP API | Regional endpoint per region |
 | Data | DynamoDB Global Table | Single table, multi-region replicas, streams-based replication |
@@ -73,7 +73,7 @@ timed the real failover:
 | Primary starts failing | T+0 |
 | First Route 53 checker detects failure | ~T+1 min |
 | All 16 global checkers confirm unhealthy, Route 53 flips record to SECONDARY | ~T+2 min |
-| `api.dr.madtamizha.com` resolves to secondary region | ~T+2-3 min |
+| `api.dr.example.com` resolves to secondary region | ~T+2-3 min |
 
 Failback was verified the same way: restoring the primary Lambda, the health
 check returned to healthy and DNS automatically reverted to PRIMARY within
@@ -149,7 +149,7 @@ aws lambda put-function-concurrency \
   --reserved-concurrent-executions 0 --region us-east-1
 
 # Watch Route 53 health check flip to unhealthy, then DNS resolve to secondary
-nslookup -type=CNAME api.dr.madtamizha.com <ns-server-from-output>
+nslookup -type=CNAME api.dr.example.com <ns-server-from-output>
 
 # Restore primary
 aws lambda delete-function-concurrency \

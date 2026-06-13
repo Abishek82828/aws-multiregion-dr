@@ -17,7 +17,7 @@ variable "secondary_region" {
 }
 
 variable "root_domain" {
-  description = "Root domain you own (e.g. madtamizha.com). A 'dr' subdomain hosted zone will be created under it."
+  description = "Root domain you own (e.g. example.com). A 'dr' subdomain hosted zone will be created under it."
   type        = string
-  default     = "madtamizha.com"
+  default     = "example.com"
 }
